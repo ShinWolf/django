@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from .models import RegistersUser
-from .forms import RegisterForm
+from .models import RegistersUser, RegistersAvis
+from .forms import RegisterForm, RegisterFormAvis
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -21,6 +21,7 @@ def services(request):
     return render(request, 'services.html')
 
 def signin(request):
+    global username
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -28,13 +29,13 @@ def signin(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Account signin successfully")
-            return redirect('index')
+            return redirect('loggedin')
         else:
             try:
                 user =  RegistersUser.objects.get(name = username)
 
                 if user.name == username and password == password:
-                    return redirect("index")
+                    return redirect("loggedin")
             except ObjectDoesNotExist:
                 messages.info(request, "l'identifiant ou le mdp sont incorect")
                 return redirect('signin')
@@ -52,3 +53,26 @@ def register(request):
         form = RegisterForm()
         user_info = {'form': form}
         return render(request, 'register.html', user_info)
+
+def loggedin(request):
+    userdetail = {'username': username}
+    return render(request, 'loggedin.html', userdetail)
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+def avis(request):
+    if request.method == 'POST':
+        form = RegisterFormAvis(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("listAvis")
+    else:
+        form = RegisterFormAvis()
+        avis_info = {'form': form}
+        return render(request, 'avis.html', avis_info)
+
+def listAvis(request):
+    messages = RegistersAvis.objects.all()
+    return render(request, 'listAvis.html', {'messages': messages})

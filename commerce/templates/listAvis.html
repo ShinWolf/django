@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %} 
+    <link rel="stylesheet" href="../static/css/table.css">
+{% endblock %}
+<body>
+    {% block content %}
+        <h2>Welcome to the HELL - ListeAvis</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>titre</th>
+                    <th>contenu</th>
+                    <th>date</th>
+                    <th>autheur</th>
+                </tr>
+            </thead>
+            {% for message in messages %}
+                <tr>
+                    <td>{{ message.titre }}</td>
+                    <td>{{ message.contenu }}</td>
+                    <td>{{ message.dateAvis }}</td>
+                    <td>{{ message.autheur }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+          
+        
+    {% endblock %}
+</body>
