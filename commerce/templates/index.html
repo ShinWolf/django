@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+<body>
+    {% block content %}
+    <h2>Welcome to the HELL</h2>
+    <img src="../static/img/danmachi.jpg">
+
+    <form method="get" action="signin">
+        <button type="submit" style="float: right;width: 10%; height: 30px;font-size : 15px">Sign In</button>
+    </form>
+    <form method="get" action="register">
+        <button type="submit" style="float: right;width: 10%; height: 30px;font-size : 15px">Register</button>
+    </form>
+    {% endblock %}
+</body>
