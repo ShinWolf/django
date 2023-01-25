@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
+from .models import RegistersUser
 from .forms import RegisterForm
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -23,13 +25,19 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        print(user)
         if user is not None:
             login(request, user)
             messages.success(request, "Account signin successfully")
             return redirect('index')
         else:
-            return render(request, 'signin.html', {'error': 'Invalid login credentials.'})
+            try:
+                user =  RegistersUser.objects.get(name = username)
+
+                if user.name == username and password == password:
+                    return redirect("index")
+            except ObjectDoesNotExist:
+                messages.info(request, "l'identifiant ou le mdp sont incorect")
+                return redirect('signin')
     else:
         return render(request, 'signin.html')
 
